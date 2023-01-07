@@ -107,10 +107,9 @@ func (cs *CacheSuite) TestCacheExpired() {
 	defaultExpiredTime = 10 * time.Millisecond
 	key := "test"
 
-	mock_cache := New()
-	mock_cache.Set(key, 1)
+	cs.cache.Set(key, 1)
 	time.Sleep(20 * time.Millisecond)
 
-	res, _ := mock_cache.Get(key)
+	res, _ := cs.cache.Get(key)
 	cs.Require().Equal(nil, res, "cache expired")
 }
