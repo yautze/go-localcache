@@ -98,8 +98,9 @@ func (cs *CacheSuite) TestGet() {
 
 func (cs *CacheSuite) TestDataNotFound() {
 	key := "Not Found"
-	res, _ := cs.cache.Get(key)
-	cs.Require().Equal(nil, res, "Not Found")
+	res, err := cs.cache.Get(key)
+	cs.Require().Equal(nil, res, "not found")
+	cs.Require().Equal(ErrDataNotFound, err, "chech return error")
 }
 
 func (cs *CacheSuite) TestCacheExpired() {
@@ -111,5 +112,5 @@ func (cs *CacheSuite) TestCacheExpired() {
 	time.Sleep(20 * time.Millisecond)
 
 	res, _ := mock_cache.Get(key)
-	cs.Require().Equal(nil, res, "cache Expired")
+	cs.Require().Equal(nil, res, "cache expired")
 }
