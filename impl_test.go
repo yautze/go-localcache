@@ -100,7 +100,7 @@ func (cs *CacheSuite) TestDataNotFound() {
 	key := "Not Found"
 	res, err := cs.cache.Get(key)
 	cs.Require().Equal(nil, res, "not found")
-	cs.Require().Equal(ErrDataNotFound, err, "chech return error")
+	cs.Require().Equal(ErrDataNotFound, err, "check return error")
 }
 
 func (cs *CacheSuite) TestCacheExpired() {
