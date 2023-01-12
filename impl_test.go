@@ -25,30 +25,21 @@ func (cs *CacheSuite) TestSet() {
 		Desc   string
 		Key    string
 		Expect interface{}
-		Setup  func()
 	}{
 		{
 			Desc:   "set value when use generally",
 			Key:    "use generally",
 			Expect: "case1",
-			Setup: func() {
-				cs.cache.Set("use generally", "case1")
-			},
 		},
 		{
 			Desc:   "set value when over write",
 			Key:    "over write",
 			Expect: "case2",
-			Setup: func() {
-				cs.cache.Set("over write", "case2")
-			},
 		},
 	}
 
 	for _, tc := range testCases {
-		if tc.Setup != nil {
-			tc.Setup()
-		}
+		cs.cache.Set(tc.Key, tc.Expect)
 
 		res, _ := cs.cache.storage[tc.Key]
 		cs.Require().Equal(tc.Expect, res.value, tc.Desc)
@@ -78,38 +69,32 @@ func (cs *CacheSuite) TestGet() {
 		{
 			Desc: "string type",
 			Key:  "string",
-			Err:  nil,
 			Data: "string",
 		},
 		{
 			Desc: "int type",
 			Key:  "int",
-			Err:  nil,
 			Data: 1,
 		},
 		{
 			Desc: "bool type",
 			Key:  "bool",
-			Err:  nil,
 			Data: true,
 		},
 		{
 			Desc: "array type",
 			Key:  "array",
-			Err:  nil,
 			Data: []int{1, 2, 3, 4},
 		},
 		{
 			Desc: "object type",
 			Key:  "object",
-			Err:  nil,
 			Data: map[string]string{"test": "test"},
 		},
 		{
 			Desc: "data not found error",
 			Key:  "not found",
 			Err:  ErrDataNotFound,
-			Data: nil,
 			Setup: func(key string, val interface{}) {
 			},
 		},
@@ -117,7 +102,6 @@ func (cs *CacheSuite) TestGet() {
 			Desc: "data not found error cause by cache expired",
 			Key:  "cache expired",
 			Err:  ErrDataNotFound,
-			Data: nil,
 			Setup: func(key string, val interface{}) {
 				defaultExpiredTime = 10 * time.Millisecond
 				defaultSetup(key, val)
@@ -135,7 +119,10 @@ func (cs *CacheSuite) TestGet() {
 		}
 
 		res, err := cs.cache.Get(tc.Key)
+		if err != nil {
+			cs.Require().Equal(tc.Err, err, tc.Desc)
+			return
+		}
 		cs.Require().Equal(tc.Data, res, tc.Desc)
-		cs.Require().Equal(tc.Err, err, tc.Desc)
 	}
 }
